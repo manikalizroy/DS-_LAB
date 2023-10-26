@@ -1,168 +1,178 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#define size 25
+#include <math.h>
+#include <stdlib.h>
+#define size 20
 
-char s[25];
 int top = -1;
+char s[size],postfix[size];
 
-void push(char item)
+int push(char x)
 {
-    if(top==size - 1)
-        printf("overflow\n");
-    else
+    if(top==size-1)
+    {   printf("Stack overflow\n");
+        return -1;
+    } 
+        s[++top] = x;
+        return 0;
+         
+}
+
+int pop()
+{
+    char store;
+    if (top == -1)
     {
-        top++;
-        s[top] = item;
+        printf("Stack empty\n");
+        return -1;
     }
-    
-char pop()
+
+    store = s[top--];
+    return store;
+}
+
+int Isp(char x)
 {
-    if(top== -1)
+    switch(x)
     {
-        printf("empty\n");
-      //  return '\0';
+        case '+' : 
+        case '-' : return 2;
+        case '*' : 
+        case '/' : return 4;
+        case '^' : return 5;
+        case '(' : return 0;
+        //case ')' : break;
+        default : return -1;
     }    
-    else
-    {
-        int item;
-        item = s[top];
-        top -=1;
-        return item;
-    }
-}  
-
-int isp(char ch)
-{
-    switch (ch)
-    {
-        case '+':
-        case '-': return 2;
-        case '*':
-        case '/': return 4;
-        case '^': return 5;
-        case '(': return 0;
-    }
-
 }
 
-int icp(char ch)
+int Icp(char x)
 {
-    switch (ch)
+    switch(x)
     {
-        case '+':
-        case '-': return 1;
-        case '*':
-        case '/': return 3;
-        case '^': return 6;
-        case '(': return 7;
-        case ')': return 0;
+        case '+' : 
+        case '-' : return 1;
+        case '*' : 
+        case '/' : return 3;
+        case '^' : return 6;
+        case '(' : return 7;
+        case ')' : return 0;
+        default : return-1;
     }
 }
 
-int i = 0;
-//while(ch[i]!='\0')
+int InfixToPostfix(char exp[], char postfix[])
 {
-void infixToPostfix(char exp[],char post[])
-{
-    int postind = 0;
-    int i=0;
-    char item,op;
-    push('(');
-    //strcat(exp,')');
-    
-    while(exp[i]!= '\0')
+    int i = 0, j = 0;
+    char symb;
+
+    while (exp[i] != '\0')
     {
-        item = exp[i];
-        op = s[top];
-        
-        if((item >='a'&& item <= 'z') || (item >='A'&& item <= 'Z') || (item >='0'&& item <= '9' ))
+        symb = exp[i];
+        if (isalpha(symb) || isdigit(symb))
         {
-            post[postind++] = item;
-         }
-        else if(item == '(')
-        {
-            push(item);
+            postfix[j++] = symb;
         }
-        else if(item == ')')
+        else if (symb == ')')
         {
-            while(op != '(')
+            while (s[top] != '(')
             {
-               post[postind++] = op;
+                postfix[j++] = pop();
             }
-        pop();
+            pop(); // pop the '('
         }
-        
         else
         {
-            while(isp(item)>=isp(op))
+            if (top == -1 || s[top] == '(' || Isp(s[top]) < Icp(symb))
             {
-                op = pop();
-                post[postind++] = op;
+                push(symb);
             }
-        push(item);    
+            else
+            {
+                while (top != -1 && s[top] != '(' && Isp(s[top]) > Icp(symb))
+                {
+                    postfix[j++] = pop();
+                }
+                push(symb);
+            }
         }
         i++;
     }
-    
-    while(top >= 0 && s[top] != '(')
+    while (top != -1)
     {
-        post[postind++] = pop();
+        postfix[j++] = pop();
     }
-    post[postind] = '\0';
-    
+    postfix[j] = '\0'; // null character of postfix expression
 }
 
-int evaluate(char post[])
+int evaluatepostfix(char postfix[])
 {
-    char s[25];
-    int i = 0,top= -1;
+    int stack[size], top = -1,i=0, result;
+    int operand,op1,op2;
+    char str[2];
     
-    while(post[i]!='\0')
+    
+    while(postfix[i]!='\0')
     {
-        char item = post[i];
-        if(isdigit(item))
-        {
-            push(item - 0);
+        char x = postfix[i];
+        printf("%c\n", x);
+        if(isdigit(x))
+        {   
+          
+            str[0] = x;
+            str[1] = 0;
+            operand = atoi(str);
+         
+            stack[++top] = operand;
         }
-        else if(isoperator(item))
+        else if((x=='+')||(x=='-')||(x=='*')||(x=='/'))
         {
-            int op2 = pop();
-            int op1 = pop();
-            switch (item)
-            {
-                case '+': push(op1 + op2);
-                        : break;
-                case '-': push(op1 - op2);
-                        : break;
-                case '*': push(op1 * op2);
-                        : break;
-                case '/': push(op1 / op2);
-                        : break;
-                case '^': push(op1 ^ op2);
-                        : break;
-            }
-        }i++;
-    }
-    
-    return pop();
+             op2 = stack[top--];
+             op1 = stack[top--];
+        
+        
+           switch(x)
+           {
+             case '+' : result= op1 + op2;
+                        break;
+             case '-' : result = op1 - op2;
+                        break;
+             case '*' : result= op1 * op2;
+                        break;
+             case '/' : result= op1 / op2;
+                        break;
+             case '^' : result = (int)pow(op1,op2);
+                        break;  
+              default : printf("Invalid operator in the expression\n");   
+                        return -1; 
+                                  
+           }
+        stack[++top] = result;
+       }
+        i++;
+    } 
+    return stack[top];
 }
-    
 
-int main()
-{
-    char exp[25],post[25];
-    int result;
+
+
+int main() {
+    char exp[size];
+    char postfix[size];
+    top=-1;
+
+    printf("Enter infix expression:\n");
+    scanf("%[^\n]", exp);
+
+    InfixToPostfix(exp, postfix);
+    printf("Postfix form: %s\n", postfix);
     
-    printf("enter infix exp: \n");
-    scanf("%[^\n]",exp);
-    
-    infixToPostfix(exp,post);
-    printf("postfix exp is : %s\n",post);
-    
-    result = evaluate(post);
-    printf("result: %d\n",post);
-    
+    int result= evaluatepostfix(postfix);
+    printf("The evaluation of the postfix expression is %d\n",result);
+
     return 0;
 }
 
+
+    
