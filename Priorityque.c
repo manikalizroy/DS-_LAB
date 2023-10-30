@@ -98,7 +98,7 @@ void display()
 int main()
 {
     int choice;
-    
+     int item, priority;
 
     while (1)
     {
@@ -109,7 +109,6 @@ int main()
         switch (choice)
         {
         case 1:
-            int item, priority;
             printf("Enter item and priority: ");
             scanf("%d %d", &item, &priority);
             enque(item, priority);
