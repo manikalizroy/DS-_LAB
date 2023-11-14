@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <math.h>
+#include <stdlib.h>
+#define size 20
+
+//int postfix[size],expr[size];
+int k=-1; 
+
+
+int Isp(char x)
+{
+    switch(x)
+    {
+        case '+' : 
+        case '-' : return 2;
+        case '*' : 
+        case '/' : return 4;
+        case '^' : return 5;
+        case '(' : return 0;
+        default : return -1;
+    }    
+}
+
+int Icp(char x)
+{
+    switch(x)
+    {
+        case '+' : 
+        case '-' : return 1;
+        case '*' : 
+        case '/' : return 3;
+        case '^' : return 6;
+        case '(' : return 7;
+        case ')' : return 0;
+        default : return-1;
+    }
+}
+
+void InfixToPostfix(char expr[], char postfix[])
+{
+    int x,i=0,j=0;
+    
+    while(expr[i]!='\0')
+    {
+        x = expr[i];
+        if(isalpha(x) || isdigit(x))
+            postfix[j++] = x;
+        else
+            if(k==-1 || expr[k] == '(' || Isp(expr[k])<Icp(x))    
+                expr[++k] = x;
+            else
+            {
+               while(k!=-1 && expr[k]!= '(' && Isp(expr[k])>Icp(x))   
+               {
+                    postfix[j++] = expr[k--];
+                    expr[++k]=x;
+               }++i;   
+            }         
+                  
+    }
+    
+    while(k>=0)
+        postfix[j++] = expr[k];
+        
+    postfix[j] = '\0';
+        
+    
+}
+
+int main()
+ {
+    char expr[size];
+    char postfix[size];
+
+    printf("Enter infix expression:\n");
+    scanf(" %[^\n]", expr);
+
+    InfixToPostfix(expr, postfix);
+    printf("Postfix form: %s\n", postfix);
+
+    return 0;
+    
+}    
