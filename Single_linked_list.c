@@ -239,3 +239,158 @@ int main()
 		default:printf("Wrong choice!!!\n"); //break;
 	}
 }
+
+
+//Singly linked list
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node
+{
+    int data;
+    struct node* link;
+} node;
+
+node *head = NULL;
+int count = 0;
+
+void insert_at_begin(int x)
+{
+    count++;
+    node* newnode = (node*)malloc(sizeof(node));
+    if(head == NULL)
+    {
+        head = newnode;
+        head->data = x;
+        head->link = NULL;
+        return;
+    }
+    
+    newnode->data = x;
+    newnode->link = head;
+    head = newnode;
+}
+
+
+void insert_at_end(int x)
+{
+    count++;
+    node *ptr;
+    node* newnode = (node*)malloc(sizeof(node));
+    if(head == NULL)
+    {
+        head = newnode;
+        head->data = x;
+        head->link = NULL;
+        return;
+    }
+    ptr = head;
+    while(ptr->link!=NULL)
+    {
+        ptr = ptr->link;
+    }
+    ptr->link= newnode;
+    newnode->data = x;
+    newnode->link = NULL;
+    
+}
+    
+void delete_from_begin()
+{
+    node *ptr;
+    int n;
+    if(head == NULL)
+    {
+        printf("Linked list is empty\n");
+        return;
+    }
+    n = head->data;
+    ptr = head->link;
+    free(head);
+    printf(" deleted item is %d",n);
+    head = ptr;
+    count--;
+    return;
+} 
+
+void delete_from_end()
+{
+    node *temp, *ptr;
+    int n;
+    if(head == NULL)
+    {    
+        printf("Linked list is empty\n");
+        return;
+    }
+    count--;
+    if(head->link == NULL)
+    {
+        n = head->data;
+        free(head);
+        head = NULL;
+        printf(" deleted item is %d",n);
+        return;
+    }
+    ptr = head;
+    while(ptr->link != NULL)
+    {
+        temp = ptr;
+        ptr = ptr->link;
+    }
+    n = ptr->data;
+    temp->link = NULL;
+    free(ptr);
+    printf(" deleted item is %d",n);
+    return;    
+}
+
+void display()   
+{
+    node *ptr;
+    if(head==NULL)
+	{
+		printf("Linked List is empty!!!\n\n");
+		return;
+	}
+    printf("no. of elements: %d\n",count);
+    printf("Elements are:\n");
+    ptr = head;
+    while(ptr->link != NULL)
+    {
+        printf("%d\t",ptr->data);
+        ptr = ptr->link;
+    }
+    printf("%d",ptr->data);
+    printf("\n");
+}
+  
+    
+int main()
+{
+    int data,choice;
+    printf("1.insert_at_begin \n2.insert_at_end \n3.delete_from_begin \n4.delete_from_end \n5.display \n6.exit\n");
+    while (1)
+    {
+        printf("\nEnter your choice: ");
+        scanf("%d",&choice);
+        switch(choice)
+        {
+            case 1: printf("\nEnter the value to be inserted: ");
+                    scanf("%d",&data);
+                    insert_at_begin(data); break;
+            case 2: printf("\nEnter the value to be inserted: ");
+                    scanf("%d",&data);
+                    insert_at_end(data); break;   
+            case 3: delete_from_begin();
+                    break;
+            case 4: delete_from_end();
+                    break;
+            case 5: display(); break;       
+            case 6: return 0;
+            default: printf("\nWrong choice\n");        
+        }
+    }
+}
+    
