@@ -1,128 +1,104 @@
 #include <stdio.h>
-#define size 20
+#include <stdlib.h>
+#define SIZE 5
 
-int f = -1, r = -1,i; // Initialize front and rear
-struct pq
-{
-    int item, priority;
-} q[size]; // Use the 'size' constant here
 
-void enque(int item, int priority) // Pass 'item' and 'priority' as arguments
+int cq[SIZE];
+int front = -1, rear = -1;
+
+struct Queue
 {
-    if (f == 0 && r == size - 1)
+    int item,priority;
+}pq[SIZE];
+
+void Dequeue()
+{
+    int item;
+    if(front == -1)
     {
-        printf("Queue is full\n");
+        printf("Queue underflow\n");
+        return;
     }
-    else if (f == -1)
+    else if(front == rear)
     {
-        f = r = 0;
-        q[f].item = item;
-        q[f].priority = priority;
-    }
-    else if (r == size - 1)
-    {
-        for (int i = f; i < r; i++)
-            q[i - 1] = q[i];
-        f -= 1;
-        r -= 1;
-        for (int i = r; i > f; i--) // Check priority in descending order
-        {
-            if (q[i].priority < priority)
-                break;
-        }
-        int loc = i + 1;
-        for (int i = r; i >= loc; i--) // Adjust 'loc' calculation
-        {
-            q[i + 1] = q[i];
-        }
-        q[loc].item = item;
-        q[loc].priority = priority;
-        r = r + 1;
+        item = pq[front].item;
+        front = rear = -1;
     }
     else
     {
-        for (int i = r; i >= f; i--) // Check priority in descending order
-        {
-            if (q[i].priority < priority)
-            {
-                break;
-            }
-        }
-        int loc = i + 1;
-        for (int i = r; i >= loc; i--) // Adjust 'loc' calculation
-        {
-            q[i + 1] = q[i];
-        }
-        q[loc].item = item;
-        q[loc].priority = priority;
-        r += 1;
+        item = pq[front].item;
+        front++;
     }
+    printf("Dequeued item: %d\n", item);
 }
 
-void deque()
+void Enqueue(int item,int priority)
 {
-    if (f == -1 && r == -1)
+    if(rear == SIZE-1)
     {
-        printf("Priority queue is empty\n");
+        printf("Queue overflow\n");
+        return;
     }
-    else
+    else if(front == -1)
     {
-        printf("Dequeued item is %d\n", q[f].item);
-        for (int i = f; i < r; i++) // Shift elements to the left
+        front = rear = 0;
+    } 
+    else if(rear < SIZE-1)
+    {
+        int i;
+        for(i=rear;i>=front;i--)
         {
-            q[i] = q[i + 1];
+            if(pq[i].priority > priority)
+                pq[i + 1] = pq[i];
+            else
+                break;
         }
-        r--; // Decrement rear
-        if (r == -1)
-        {
-            f = -1; // Reset front if queue is empty
-        }
-    }
+        rear++;
+    }    
+    pq[rear].item = item;
+    pq[rear].priority = priority;
 }
 
-void display()
+void Display()
 {
-    if (f == -1)
+    if(front == -1)
     {
-        printf("Priority queue is empty\n");
+        printf("Queue empty\n");
+        return;
     }
     else
     {
-        for (int i = f; i <= r; i++) // Include 'r' in the loop
+        int i;
+        printf("Queue elements are:\n");
+        for(i=front;i<=rear;i++)
         {
-            printf("%d\n", q[i].item);
+            printf("%d %d",pq[i].item,pq[i].priority);
+            printf("\n");
         }
     }
 }
 
 int main()
 {
-    int choice;
-     int item, priority;
-
-    while (1)
+    int choice,item,priority;
+    printf("\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
+    while(1)
     {
-        printf("\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
-        printf("Enter your choice: ");
+        printf("Enter ur choice:\t");
         scanf("%d", &choice);
-
-        switch (choice)
+        switch(choice)
         {
-        case 1:
-            printf("Enter item and priority: ");
-            scanf("%d %d", &item, &priority);
-            enque(item, priority);
-            break;
-        case 2:
-            deque();
-            break;
-        case 3:
-            display();
-            break;
-        case 4:
-            return 0; // You should include a graceful exit
-        default:
-            printf("Invalid choice. Please try again.\n");
+            case 1: printf("Enter value of item and priority:\t");
+                    scanf("%d %d", &item, &priority);
+                    Enqueue(item,priority);
+                    break;
+            case 2: Dequeue();
+                    break;
+            case 3: Display();
+                    break;
+            case 4: return 0;
+            default : printf("Invalid choice!!\n");
+                      break;
         }
     }
 
