@@ -1,73 +1,93 @@
 #include <stdio.h>
-#define SIZE 20
+#include <stdlib.h>
+#define SIZE 5
+
 
 int cq[SIZE];
 int front = -1, rear = -1;
 
-void CQ_Insert(int item)
+void Enque(int data)
 {
-    int next;
     if(front == -1)
     {
         front = rear = 0;
-        cq[rear] = item;
-    }
+        cq[rear] = data;
+    } 
     else
     {
-        next = (rear +1)%SIZE;
-        if(next == front)
+        int next = (rear + 1)%SIZE;
+        if(front == next)
         {
-            printf("queue  full\n");
+            printf("Queue overflow\n");
+            return;
         }
-        else
-        {
-            rear = next;
-            cq[rear] = item;
-        }
+        rear = next;
+        cq[rear] = data;
     }
 }
 
-void CQ_del()
+void Deque()
 {
     int item;
     if(front == -1)
-        printf("que emty\n");
+    {
+        printf("Queue underflow\n");
+        return;
+    }
+    else if(front == rear)
+    {
+        item = cq[front];
+        front = rear = -1;
+    }
     else
     {
         item = cq[front];
-        if(front == rear)
-            front = rear = -1;
-        else
-            front = (front+1)%SIZE;
+        front = (front + 1)%SIZE;
     }
+    printf("Dequeued item: %d\n", item);
 }
 
-void display()
+void Display()
 {
-    if (front == -1)
+    if(front == -1)
     {
         printf("Queue empty\n");
         return;
     }
-    int i=0;
-    for (int i = front; i <= rear; i++)
+    else
     {
-        printf("%d ", cq[i]);
+        int i;
+        printf("Queue elements are:\n");
+        for(i=front;i<=rear;i++)
+        {
+            printf("%d\n",cq[i]);
+        }
     }
-    printf("\n");
 }
-
 
 int main()
 {
-    CQ_Insert(1);
-    CQ_Insert(5);
-    display();
-    CQ_del();
-    display();
-    CQ_del();
-    display();
-    CQ_del();
+    int choice,val;
+    printf("1.Enque\n2.Deque\n3.Display\n4.Exit\n");
+    while(1)
+    {
+        printf("Enter ur choice:\t");
+        scanf("%d", &choice);
+        switch(choice)
+        {
+            case 1: printf("Enter value to be enqued:\t");
+                    scanf("%d",&val);
+                    Enque(val);
+                    break;
+            case 2: Deque();
+                    break;
+            case 3: Display();
+                    break;
+            case 4: return 0;
+            default : printf("Invalid choice!!\n");
+                      break;
+        }
+    }
 
     return 0;
 }
